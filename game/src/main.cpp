@@ -4,17 +4,17 @@
 #include "raygui.h"
 #include "game.h"
 
-const unsigned int TARGET_FPS = 50;
+const unsigned int TARGET_FPS = 50; // frames/second
 float time = 0;
 float dt;
 float x = 500;
 float y = 500;
-float frequency = 1.0f;
-float amplitude = 70;
+float frequency = 1;
+float amplitude = 100;
 
 void update()
 {
-	dt = 1.0 / TARGET_FPS;
+	dt = 1.0f / TARGET_FPS;
     time += dt;
 
     x = x + (-sin(time * frequency)) * frequency * amplitude * dt;
@@ -25,11 +25,14 @@ void draw()
 {
     BeginDrawing();
     ClearBackground(BLACK);
-	DrawText("Hello world!", 10, 80, 20, LIGHTGRAY);
-	GuiSliderBar(Rectangle{ 60, 5, 1000, 10 }, "Time", TextFormat("%.2f", time), &time, 0, 240);
-	DrawText(TextFormat("FPS: %i, TIME: %.2f", TARGET_FPS, time), GetScreenWidth() - 250, 20, 20, LIGHTGRAY);
-    DrawCircle(x, y, 60, RED);
-	DrawCircle(GetScreenWidth() / 2 + cos(time * frequency) * amplitude, GetScreenHeight() / 2 + sin(time * frequency) * amplitude, 60, GREEN);
+	DrawText("Anthony Laylor 101547506", 10, float(GetScreenHeight() - 30), 20, BLACK);
+
+	GuiSliderBar(Rectangle{ 10, 15, 1000, 20 }, "", TextFormat("%.2f", time), &time, 0, 240);
+	DrawText(TextFormat("T: %6.2f", time), GetScreenWidth() - 140, 10, 10, BLACK);
+
+    DrawCircle(x, y, 70, RED);
+	DrawCircle(500 + cos(time * frequency) * amplitude, 500 + sin(time * frequency) * amplitude, 70, GREEN);
+
 	EndDrawing();
 }
 
@@ -37,12 +40,18 @@ int main()
 {
     InitWindow(InitialWidth, InitialHeight, "Physics Labs: Anthony Laylor 101547506");
     SetTargetFPS(TARGET_FPS);
+    
 
+	while (!WindowShouldClose())
+	{
+		update();
+		draw();
+	}
     /*while (!WindowShouldClose())
     {
         BeginDrawing();
-            ClearBackground(WHITE);
-            DrawText("Hello world!", 10, 10, 20, LIGHTGRAY);
+            ClearBackground(DARKGREEN);
+            DrawText("Anthony Laylor 101547506", 10, float(GetScreenHeight() - 10), 20, BLACK);
 
 
             time += 1;
