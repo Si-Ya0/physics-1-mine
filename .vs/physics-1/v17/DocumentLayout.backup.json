@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alayl\\Documents\\Github repos\\physics-1-mine\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A6B37859-121E-2DD0-5B5C-DE75C7050B25}|game\\physics-1.vcxproj|C:\\Users\\alayl\\Documents\\Github repos\\physics-1-mine\\game\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A6B37859-121E-2DD0-5B5C-DE75C7050B25}|game\\physics-1.vcxproj|solutionrelative:game\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\alayl\\Documents\\Github repos\\physics-1-mine\\game\\src\\main.cpp",
+              "RelativeDocumentMoniker": "game\\src\\main.cpp",
+              "ToolTip": "C:\\Users\\alayl\\Documents\\Github repos\\physics-1-mine\\game\\src\\main.cpp",
+              "RelativeToolTip": "game\\src\\main.cpp",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAABoAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-05T15:40:27.132Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
