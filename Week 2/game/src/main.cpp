@@ -12,26 +12,29 @@ int launchSpeed = 1;
 int endVectorX;
 int endVectorY;
 
-void launchAngleCalc()
+void launchAngleCalc() //Keeps launch angle between 0 and 360 degrees
 {
 	launchAngle = launchAngle % 360;
 	if (launchAngle < 0) 
 		launchAngle += 360;
 }
 
-void endVector()
+void endVector() //Converts to radians for cos and sin functions
 {
-	endVectorX = origin[0] + (launchSpeed * cosf(launchAngle * (PI / 180)));
+	endVectorX = origin[0] + (launchSpeed * cosf(launchAngle * (PI / 180))); 
 	endVectorY = origin[1] - (launchSpeed * sinf(launchAngle * (PI / 180)));
 }
 
-void PrintStats() 
+void PrintStats() //Prints stats and instructions to screen
 {
 	DrawText(TextFormat("Angle: %d", launchAngle), GetScreenWidth() - 300, 10, 30, WHITE);
 	DrawText(TextFormat("Speed: %d", launchSpeed), GetScreenWidth() - 300, 50, 30, WHITE);
+
+	DrawText("Use Up/Down arrows to change angle", 10, 10, 20, WHITE);
+	DrawText("Use Left/Right arrows to change speed", 10, 40, 20, WHITE);
 }
 
-void update()
+void update() 
 {
 	dt = GetFrameTime();
 
@@ -63,7 +66,7 @@ void update()
 	if (IsKeyDown(KEY_RIGHT))// Adjust launch speed with left and right arrow keys
 	{
 		launchSpeed++;
-		if (launchSpeed > 1000) launchSpeed = 1000;  // Cap maximum speed
+		if (launchSpeed > 800) launchSpeed = 800;  // Cap maximum speed
 	}
 	else if (IsKeyDown(KEY_LEFT))
 	{
