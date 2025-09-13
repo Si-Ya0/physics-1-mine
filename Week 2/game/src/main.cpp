@@ -5,73 +5,85 @@
 #include "game.h"
 
 const unsigned int TARGET_FPS = 50; // frames/second
-float time = 0;
-float dt;
-float x = 500;
-float y = 500;
-float frequency = 1;
-float amplitude = 100;
+float dt; // Delta time (time between frames) used for physics calculations
 int origin[2] = { 500, 500 };
 int launchAngle = 0;
-int launchSpeed;
+int launchSpeed = 1;
+int endVectorX;
+int endVectorY;
+
+void launchAngleCalc()
+{
+	launchAngle = launchAngle % 360;
+	if (launchAngle < 0) 
+		launchAngle += 360;
+}
+
+void endVector()
+{
+	endVectorX = origin[0] + (launchSpeed * cosf(launchAngle * (PI / 180)));
+	endVectorY = origin[1] - (launchSpeed * sinf(launchAngle * (PI / 180)));
+}
+
+void PrintStats() 
+{
+	DrawText(TextFormat("Angle: %d", launchAngle), GetScreenWidth() - 300, 10, 30, WHITE);
+	DrawText(TextFormat("Speed: %d", launchSpeed), GetScreenWidth() - 300, 50, 30, WHITE);
+}
 
 void update()
 {
-	dt = 1.0f / TARGET_FPS;
-    time += dt;
+	dt = GetFrameTime();
+
+	if (IsKeyDown(KEY_R)) // Reset launch angle and speed with R key
+	{
+		launchAngle = 0;
+		launchSpeed = 1;
+	}
+
+	if (IsKeyDown(KEY_UP)) // Adjust launch angle with up and down arrow keys
+	{
+		launchAngle++;
+	}
+	else if (IsKeyDown(KEY_DOWN))
+	{
+		launchAngle--;
+	}
+
+	if (IsKeyDown(KEY_RIGHT))// Adjust launch speed with left and right arrow keys
+	{
+		launchSpeed++;
+	}
 	
-    x = x + (-sin(time * frequency)) * frequency * amplitude * dt;
-    y = y + (cos(time * frequency)) * frequency * amplitude * dt;
-}
+	else if (IsKeyDown(KEY_LEFT))
+	{
+		launchSpeed--;
+	}
 
-void launchAngleCalc() 
-{
-	launchAngle = launchAngle % 360;
-}
+	if (IsKeyDown(KEY_RIGHT))// Adjust launch speed with left and right arrow keys
+	{
+		launchSpeed++;
+		if (launchSpeed > 1000) launchSpeed = 1000;  // Cap maximum speed
+	}
+	else if (IsKeyDown(KEY_LEFT))
+	{
+		launchSpeed--;
+		if (launchSpeed < 1) launchSpeed = 1;  // Prevent negative/zero speed
+	}
 
-void launchSpeedCalc()
-{
-	//launchSpeed = sqrt((2 * 9.81 * (y - origin[1])));
+	launchAngleCalc();
+	endVector();
 }
 
 void draw()
 {
-	switch (launchAngle) // Adjust launch angle with up and down arrow keys
-	{
-		case KEY_UP:
-		{
-			launchAngle++;
-		}
-		case KEY_DOWN:
-		{
-			launchAngle--;
-		}
-	}
-
-	switch (launchSpeed) // Adjust launch speed with left and right arrow keys
-	{
-		case KEY_RIGHT:
-		{
-			launchSpeed++;
-		}
-		case KEY_LEFT:
-		{
-			launchSpeed--;
-		}
-	}
-	launchAngleCalc();
-	launchSpeedCalc();
-
+	Vector2 startpos = { (float)origin[0], (float)origin[1] };
+	Vector2 endpos = { (float)endVectorX, (float)endVectorY };
     BeginDrawing();
     ClearBackground(DARKBLUE);
-	DrawText("Anthony Laylor 101547506", 10, float(GetScreenHeight() - 30), 20, WHITE);
-
-	GuiSliderBar(Rectangle{ 10, 15, 1000, 20 }, "", TextFormat("%.2f", time), &time, 0, 360);
-	DrawText(TextFormat("T: %6.2f", time), GetScreenWidth() - 140, 10, 10, BLACK);
-
-    DrawCircle(x, y, 70, RED);
-	DrawCircle(500 + cos(time * frequency) * amplitude, 500 + sin(time * frequency) * amplitude, 70, GREEN);
-
+	DrawText("Anthony Laylor 101547506", 10, float(GetScreenHeight() - 30), 20, WHITE);                                           
+	DrawLineEx(startpos, endpos, 10, RED); // Draw line from origin to projectile
+	PrintStats();
 	EndDrawing();
 }
 
@@ -79,7 +91,6 @@ int main()
 {
     InitWindow(InitialWidth, InitialHeight, "Physics Labs: Anthony Laylor 101547506");
     SetTargetFPS(TARGET_FPS);
-    
 
 	while (!WindowShouldClose())
 	{
