@@ -15,7 +15,7 @@ float drag = 0.99f; // keep it 0.99 for now;
 float mass; //Not needed atm
 float time; //Time in seconds
 Vector2 velocity;
-Vector2 position;
+Vector2 position{ 200, 500 };
 Vector2 gravityAcceleration = { 0, 100 }; // Gravity acceleration vector
 
 void launchAngleCalc() //Keeps launch angle between 0 and 360 degrees
@@ -117,8 +117,8 @@ void draw()
 	
 
 	DrawLineEx(startpos, endpos, 10, GRAY); // Draw line from origin to projectile
-	Vector2 velocity = { cos(launchAngle * DEG2RAD) * launchSpeed, -sin(launchAngle * DEG2RAD) * launchSpeed };
-	DrawCircle(position.x, position.y, 25, RED); // Draw birb at origin
+	Vector2 velocity = { cos(launchAngle * DEG2RAD) * launchSpeed, -sin(launchAngle * DEG2RAD) * launchSpeed};
+	DrawCircle(position.x, position.y, 10, RED); // Draw birb at origin
 
 	PrintStats();
 	EndDrawing();
