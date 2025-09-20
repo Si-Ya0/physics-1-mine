@@ -16,7 +16,7 @@ float mass; //Not needed atm
 float time; //Time in seconds
 Vector2 velocity;
 Vector2 position{ -50, 500 };
-Vector2 gravityAcceleration = { 0, 1 }; // Gravity acceleration vector
+Vector2 gravityAcceleration = { 0, 0.2 }; // Gravity acceleration vector
 
 void launchAngleCalc() //Keeps launch angle between 0 and 360 degrees
 {
@@ -97,7 +97,7 @@ void update()
 		
 	}
 	velocity.y += gravityAcceleration.y * time; 
-	velocity.x *= drag; 
+	//velocity.x *= drag; 
 	position += velocity * dt;
 	Controls();
 	launchAngleCalc();
