@@ -15,8 +15,8 @@ float drag = 0.99f; // keep it 0.99 for now;
 float mass; //Not needed atm
 float time; //Time in seconds
 Vector2 velocity;
-Vector2 position{ 200, 500 };
-Vector2 gravityAcceleration = { 0, 100 }; // Gravity acceleration vector
+Vector2 position{ -50, 500 };
+Vector2 gravityAcceleration = { 0, 1 }; // Gravity acceleration vector
 
 void launchAngleCalc() //Keeps launch angle between 0 and 360 degrees
 {
@@ -30,11 +30,6 @@ void endVector() //Converts to radians for cos and sin functions
 	endVectorX = origin[0] + (launchSpeed * cosf(launchAngle * (PI / 180))); 
 	endVectorY = origin[1] - (launchSpeed * sinf(launchAngle * (PI / 180)));
 }
-
-//void velocityCalc() //Calculates velocity based on speed and angle
-//{
-//	velocity = launchSpeed * (cosf(launchAngle * DEG2RAD));
-//}
 
 void PrintStats() //Prints stats and instructions to screen
 {
@@ -99,8 +94,10 @@ void update()
 	{
 		position = { (float)origin[0], (float)origin[1] };
 		velocity = { (float)cos(launchAngle * DEG2RAD) * launchSpeed, (float) - sin(launchAngle * DEG2RAD) * launchSpeed};
+		
 	}
-
+	velocity.y += gravityAcceleration.y * time; 
+	velocity.x *= drag; 
 	position += velocity * dt;
 	Controls();
 	launchAngleCalc();
