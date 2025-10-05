@@ -79,6 +79,7 @@ void update()
         newBall.position = { (float)origin[0], (float)origin[1] };
 		newBall.velocity = { cosf(launchAngle * DEG2RAD) * launchSpeed, -sinf(launchAngle * DEG2RAD) * launchSpeed }; //velocity based on angle and speed for position
         newBall.active = true;
+        newBall.color = GREEN;
         balls.push_back(newBall); //pushes into vector
     }
 
@@ -88,6 +89,23 @@ void update()
             ball.velocity.y += gravityAcceleration.y * dt;
             ball.position += ball.velocity * dt;
 			ball.trail.push_back(ball.position); // store current position in trail
+        }
+    }
+
+    for (auto& ball : balls) {
+        ball.color = GREEN;
+    }
+
+    for (size_t i = 0; i < balls.size(); i++) {
+        for (size_t j = i + 1; j < balls.size(); j++) {
+            float distance = Vector2Distance(balls[i].position, balls[j].position);
+
+            float radius = balls[i].randomRadius + balls[j].randomRadius;
+
+            if (distance < radius) {
+                balls[i].color = RED;
+                balls[j].color = RED;
+            }
         }
     }
 
@@ -114,7 +132,7 @@ void draw()
             }
         }
         if (ball.active) {
-            DrawCircleV(ball.position, ball.randomRadius, RED);
+            DrawCircleV(ball.position, ball.randomRadius, ball.color);
         }
     }
 
