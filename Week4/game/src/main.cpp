@@ -19,7 +19,7 @@ struct Ball { // Ball structure
 	bool active; // is the ball in motion
     vector<Vector2> trail; // stores past positions
     Color color;
-    int randomRadius = GetRandomValue(0, 75);
+    int randomRadius = GetRandomValue(10, 75);
 };
 vector<Ball> balls; // stores all balls
 
