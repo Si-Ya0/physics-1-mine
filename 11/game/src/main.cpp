@@ -158,6 +158,32 @@ bool HalfSpaceCollisionResponse(Ball& ball, HalfSpace halfSpace) {
 	}
 }
 
+void ApplyFriction(Ball& ball, HalfSpace& halfspace) {
+    Vector2 normal = halfspace.normal;
+    Vector2 velocity = ball.velocity;
+
+    float normalComponent = Vector2DotProduct(velocity, normal);
+    Vector2 vNormal = Vector2Scale(normal, normalComponent);
+    Vector2 vTangent = Vector2Subtract(velocity, vNormal);
+
+    if (Vector2Length(vTangent) < 0.01f) return; // No friction if tangent velocity is negligible
+
+    Vector2 tangentDir = Vector2Normalize(vTangent);
+    float NForceMagnitude = ball.mass * gravityAcceleration.y * fabsf(normal.y);
+
+    float frictionMagnitude = ball.mew * NForceMagnitude;
+
+    Vector2 frictionAcceleration = Vector2Scale(tangentDir, -frictionMagnitude / ball.mass);
+
+    ball.velocity.x += frictionAcceleration.x * dt;
+    ball.velocity.y += frictionAcceleration.y * dt;
+
+    if (Vector2DotProduct(ball.velocity, tangentDir) < 0) {
+        ball.velocity = vNormal;
+
+
+    }
+}
 void update()
 {
     dt = GetFrameTime();
@@ -173,6 +199,7 @@ void update()
     float radians = halfspace.angle * DEG2RAD;
     halfspace.normal.x = sinf(radians);
     halfspace.normal.y = -cosf(radians);
+	halfspace.normal = Vector2Normalize(halfspace.normal);
 
 
     // Update ground plane from sliders
@@ -210,7 +237,7 @@ void update()
 			ball.trail.push_back(ball.position); // store current position in trail
         }
     }
-
+    
     for (auto& ball : balls) {
         ball.color = ball.baseColor; //default color
 
@@ -238,8 +265,11 @@ void update()
         for (size_t j = i + 1; j < balls.size(); j++) {
             BallCollisionResponse(balls[i], balls[j]);
 		}
-        HalfSpaceCollisionResponse(balls[i], halfspace);
-        HalfSpaceCollisionResponse(balls[i], halfspace2);
+        bool hit1 = HalfSpaceCollisionResponse(balls[i], halfspace);
+        bool hit2 = HalfSpaceCollisionResponse(balls[i], halfspace2);
+
+		if (hit1) ApplyFriction(balls[i], halfspace);
+		if (hit2) ApplyFriction(balls[i], halfspace2);
 	}
     launchAngleCalc();
     endVector();
@@ -251,51 +281,63 @@ void draw()
     Vector2 endpos = { (float)endVectorX, (float)endVectorY };
 
     BeginDrawing();
-    ClearBackground(DARKBLUE);
+    ClearBackground(BLACK);
 
     DrawText("Anthony Laylor 101547506", 10, float(GetScreenHeight() - 30), 20, WHITE);
     DrawLineEx(startpos, endpos, 10, GRAY); // aim line
 
-
-    float radians2 = halfspace2.angle * DEG2RAD;
-    halfspace2.normal.x = sinf(radians2);
-    halfspace2.normal.y = -cosf(radians2);
-
-	// Draw all balls and their trails
     for (auto& ball : balls) {
-        if (!ball.trail.empty()) {
-            for (size_t i = 1; i < ball.trail.size(); i++) {
-                DrawLineV(ball.trail[i - 1], ball.trail[i], YELLOW); // draws trail within the image/ball loop
-            }
-        }
-        if (ball.active) {
-            DrawCircleV(ball.position, ball.randomRadius, ball.color);
-        }
+        DrawLineEx(ball.position, ball.position + ball.velocity * 0.1f, 5, RED); // velocity vector
+        DrawLineEx(ball.position, ball.position + gravityAcceleration * 0.1f, 5, BROWN); // gravity vector
+        Vector2 norm = Vector2Normalize(halfspace.normal);
+        float velnorm = Vector2DotProduct(ball.velocity, norm);
+        Vector2 normalComponent = Vector2Scale(norm, velnorm * 0.1f);
+
+        DrawLineEx(ball.position, Vector2Add(ball.position, normalComponent), 5, GREEN);
     }
 
-    Vector2 dir = { -halfspace.normal.y, halfspace.normal.x }; // direction along the plane
-    Vector2 p1 = Vector2Add(halfspace.position, Vector2Scale(dir, 1000));
-    Vector2 p2 = Vector2Add(halfspace.position, Vector2Scale(dir, -1000));
-    DrawLineV(p1, p2, WHITE);
+        float radians2 = halfspace2.angle * DEG2RAD;
+        halfspace2.normal.x = sinf(radians2);
+        halfspace2.normal.y = -cosf(radians2);
+        halfspace2.normal = Vector2Normalize(halfspace2.normal);
+
+    
+        // Draw all balls and their trails
+        for (auto& ball : balls) {
+            if (!ball.trail.empty()) {
+                for (size_t i = 1; i < ball.trail.size(); i++) {
+                    DrawLineV(ball.trail[i - 1], ball.trail[i], YELLOW); // draws trail within the image/ball loop
+                }
+            }
+            if (ball.active) {
+                DrawCircleV(ball.position, ball.randomRadius, ball.color);
+            }
+        }
+    
+        Vector2 dir = { -halfspace.normal.y, halfspace.normal.x }; // direction along the plane
+        Vector2 p1 = Vector2Add(halfspace.position, Vector2Scale(dir, 1000));
+        Vector2 p2 = Vector2Add(halfspace.position, Vector2Scale(dir, -1000));
+        DrawLineV(p1, p2, WHITE);
 
 
 
-    // Draw normal (red arrow)
-    Vector2 normalEnd = Vector2Add(halfspace.position, Vector2Scale(halfspace.normal, 50));
-    DrawLineEx(halfspace.position, normalEnd, 3, RED);
+        // Draw normal (red arrow)
+        Vector2 normalEnd = Vector2Add(halfspace.position, Vector2Scale(halfspace.normal, 50));
+        DrawLineEx(halfspace.position, normalEnd, 3, RED);
+   
 
+        Vector2 dir2 = { -halfspace2.normal.y, halfspace2.normal.x };
+        Vector2 p1_2 = Vector2Add(halfspace2.position, Vector2Scale(dir2, 1000));
+        Vector2 p2_2 = Vector2Add(halfspace2.position, Vector2Scale(dir2, -1000));
+        DrawLineV(p1_2, p2_2, WHITE);
+        
+        Vector2 normalEnd2 = Vector2Add(halfspace2.position, Vector2Scale(halfspace2.normal, 50));
+        DrawLineEx(halfspace2.position, normalEnd2, 3, RED);
+    
 
-    Vector2 dir2 = { -halfspace2.normal.y, halfspace2.normal.x };
-    Vector2 p1_2 = Vector2Add(halfspace2.position, Vector2Scale(dir2, 1000));
-    Vector2 p2_2 = Vector2Add(halfspace2.position, Vector2Scale(dir2, -1000));
-    DrawLineV(p1_2, p2_2, WHITE);
-
-    Vector2 normalEnd2 = Vector2Add(halfspace2.position, Vector2Scale(halfspace2.normal, 50));
-    DrawLineEx(halfspace2.position, normalEnd2, 3, RED);
-
-
-    PrintStats();
-    EndDrawing();
+        PrintStats();
+        EndDrawing();
+    
 }
 // dot product - radius, in half space
 //remember to add halfspace 
