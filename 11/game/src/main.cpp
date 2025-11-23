@@ -185,6 +185,20 @@ void update()
         newBall.active = true;
         newBall.baseColor = SetColor(RandomInt());
         newBall.color = newBall.baseColor;
+        if (ColorToInt(newBall.baseColor) == ColorToInt(RED) || ColorToInt(newBall.baseColor) == ColorToInt(BLUE)) {
+            newBall.mew = 0.1f;
+        }
+        else {
+            newBall.mew = 0.8f;
+		}
+
+        if (ColorToInt(newBall.baseColor) == ColorToInt(RED) || ColorToInt(newBall.baseColor) == ColorToInt(GREEN)) {
+            newBall.mass = 2.f;
+        }
+        else {
+            newBall.mass = 8.f;
+		}
+
         balls.push_back(newBall); //pushes into vector
     }
 
